@@ -4,7 +4,7 @@ describe Sideload::Archiver do
   describe "#new" do
     it "should create the repository directory" do
       archiver = Sideload::Archiver.new('ssh://enterprise-example', 'test', 'test')
-      File.exist?(archiver.repodir).should be_true
+      archiver.repodir.parent.should exist
     end
 
     it "should create the archive directory" do

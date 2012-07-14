@@ -17,18 +17,14 @@ module Sideload
     end
 
     def archive(commit_id='HEAD', path=nil)
+      cache_repository
+
       commit_id = resolve_head[0..9] if commit_id=='HEAD'
       pathslug = path.gsub('/','-') if path
       archivename = ([org, repo, commit_id, pathslug].compact.join('-') + ".tar")
       @archivefile = archivedir + archivename
       return archivefile if File.exists?(archivefile)
-      if File.exists?(repodir)
-        puts "Already exists, fetching from: #{org}/#{repo}" if ENV['DEBUG']
-        update_from_remote
-      else
-        puts "Mirroring from: #{org}/#{repo}" if ENV['DEBUG']
-        mirror
-      end
+
       create_archive(commit_id, path)
       return archivefile
     end
@@ -44,6 +40,17 @@ module Sideload
 
     def resolve_head
       %x[git --git-dir=#{repodir} rev-parse HEAD]
+    end
+
+    def cache_repository
+      if File.exists?(repodir+'HEAD')
+        puts "Already exists, fetching from: #{org}/#{repo}" if ENV['DEBUG']
+        update_from_remote
+      else
+        repodir.rmtree rescue nil
+        puts "Mirroring from: #{org}/#{repo}" if ENV['DEBUG']
+        mirror
+      end
     end
 
     def update_from_remote
