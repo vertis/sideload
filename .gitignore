@@ -1,1 +1,3 @@
 config/sideload.yml
+tmp/git
+tmp/git-tars
