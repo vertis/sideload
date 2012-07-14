@@ -1,1 +1,1 @@
-Sideload - the replacement download server for Github Enterprise
+Sideload - the surrogate download server for Github Enterprise
