@@ -9,8 +9,8 @@ require 'fileutils'
 
 require './lib/sideload'
 
-FileUtils.rm_r('tmp/git')
-FileUtils.rm_r('tmp/git-tars')
+FileUtils.rm_r('tmp/git') rescue nil
+FileUtils.rm_r('tmp/git-tars') rescue nil
 
 RSpec.configure do |config|
   
