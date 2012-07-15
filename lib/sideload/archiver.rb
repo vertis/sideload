@@ -1,32 +1,48 @@
+require 'open3'
 require 'pathname'
+
 module Sideload
   class Archiver
     attr_accessor :base_url, :org, :repo, :basedir, :repodir, :archivedir, :archivefile
 
     def initialize(base_url, organization, repository, options={})
-      @base_url = base_url
-      @org = organization
-      @repo = repository
-      @basedir = Pathname.new(options[:basedir] || 'tmp/git')
+      begin
+        @base_url = base_url
+        @org = organization
+        @repo = repository
+        @basedir = Pathname.new(options[:basedir] || 'tmp/git').expand_path
+        @basedir.mkpath
+        (@basedir+org).mkpath
 
-      @repodir = @basedir+"#{org}/#{repo}.git"
-      @repodir.parent.mkpath
+        @repodir = @basedir+"#{org}/#{repo}.git"
+        
 
-      @archivedir = Pathname.new(options[:archivedir] || 'tmp/git-tars')
-      @archivedir.mkpath
+        @archivedir = Pathname.new(options[:archivedir] || 'tmp/git-tars').expand_path
+        @archivedir.mkpath
+      rescue => ex
+        puts ex.message
+        puts ex.backtrace
+        raise ex
+      end
     end
 
     def archive(commit_id='HEAD', path=nil)
-      cache_repository
+      begin
+        cache_repository
 
-      commit_id = resolve_head[0..9] if commit_id=='HEAD'
-      pathslug = path.gsub('/','-') if path
-      archivename = ([org, repo, commit_id, pathslug].compact.join('-') + ".tar")
-      @archivefile = archivedir + archivename
-      return archivefile if File.exists?(archivefile)
+        commit_id = resolve_head[0..9] if commit_id=='HEAD'
+        pathslug = path.gsub('/','-') if path
+        archivename = ([org, repo, commit_id, pathslug].compact.join('-') + ".tar")
+        @archivefile = archivedir + archivename
+        #return archivefile if File.exists?(archivefile)
 
-      create_archive(commit_id, path)
-      return archivefile
+        create_archive(commit_id, path)
+        return archivefile
+      rescue => ex
+        puts ex.message
+        puts ex.backtrace
+        raise ex
+      end
     end
 
     private

@@ -14,7 +14,7 @@ describe Sideload::Archiver do
 
     it "should set the repodir" do
       archiver = Sideload::Archiver.new('ssh://enterprise-example', 'test', 'test')
-      archiver.repodir.should == Pathname.new('tmp/git/test/test.git')
+      archiver.repodir.to_s.should =~ %r{tmp/git/test/test.git}
     end
   end
 
@@ -27,7 +27,7 @@ describe Sideload::Archiver do
 
     it "should return the path of the archive" do
       archiver = Sideload::Archiver.new('git://github.com', 'vertis', 'flynn')
-      archiver.archive('081178062d').to_s.should == 'tmp/git-tars/vertis-flynn-081178062d.tar'
+      archiver.archive('081178062d').to_s.should =~ %r{/tmp/git-tars/vertis-flynn-081178062d.tar}
     end
   end
 end
