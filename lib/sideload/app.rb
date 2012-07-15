@@ -12,16 +12,10 @@ module Sideload
 
     get '/download/:jobid' do
       status = Resque::Plugins::Status::Hash.get(params[:jobid])
-      case status["status"]
-      when "completed"
-        send_file status['file'], :filename => File.basename(status['file']), :disposition => :attachment
-      when "failed"
-        status["message"]
-      when "queued"
-        "<html><head><meta http-equiv=\"refresh\" content=\"5\"></head></html>"
-      when "working"
-        "<html><head><meta http-equiv=\"refresh\" content=\"5\"></head></html>"
+      while status["status"]!="completed"
+        sleep 1
       end
+      send_file status['file'], :filename => File.basename(status['file']), :disposition => :inline
     end
   end
 end
