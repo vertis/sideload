@@ -26,7 +26,7 @@ module Sideload
       end
     end
 
-    def archive(commit_id='HEAD', filter=nil)
+    def archive(commit_id='HEAD', prefix=nil, filter=nil)
       begin
         cache_repository
 
@@ -36,7 +36,7 @@ module Sideload
         @archivefile = archivedir + archivename
         #return archivefile if File.exists?(archivefile)
 
-        create_archive(commit_id, filter)
+        create_archive(commit_id, prefix, filter)
         return archivefile
       rescue => ex
         puts ex.message
@@ -77,9 +77,10 @@ module Sideload
       run("git clone --mirror #{base_url}/#{org}/#{repo}.git #{repodir}")
     end
 
-    def create_archive(commit_id='HEAD', filter=nil)
+    def create_archive(commit_id='HEAD', prefix=nil, filter=nil)
       cmd = []
-      cmd << "git archive --format=tar --remote='#{repodir}' --prefix='#{repo}/'"
+      cmd << "git archive --format=tar --remote='#{repodir}'"
+      cmd << "--prefix='#{prefix}/'" if prefix
       cmd << "'#{[commit_id, filter].compact.join(":")}'"
       cmd << "> #{archivefile}"
       run(cmd.join(" "))
