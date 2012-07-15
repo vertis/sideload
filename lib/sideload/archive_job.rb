@@ -7,7 +7,7 @@ module Sideload
     include Resque::Plugins::Status
 
     def perform
-      archiver = Sideload::Archiver.new('git://github.com', options["org"], options["repo"])
+      archiver = Sideload::Archiver.new(Sideload.config.base_url, options["org"], options["repo"])
       file = archiver.archive(options["commit"])
       completed("file" => file.to_s)
     end
