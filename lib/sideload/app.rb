@@ -10,6 +10,11 @@ module Sideload
       redirect "/download/#{jobid}", 302
     end
 
+    get '/:org/:repo/tarball' do
+      jobid = Sideload::ArchiveJob.create(:org => params[:org], :repo => params[:repo], :commit => params[:commit], :filter => params[:filter], :prefix => params[:prefix])
+      redirect "/download/#{jobid}", 302
+    end
+
     get '/download/:jobid' do
       while(true)
         status = Resque::Plugins::Status::Hash.get(params[:jobid])

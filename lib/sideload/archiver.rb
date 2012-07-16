@@ -31,8 +31,9 @@ module Sideload
         cache_repository
 
         commit_id = resolve_head[0..9] if commit_id=='HEAD'
+        commitslug = commit_id.gsub('/','-').gsub('#','-')
         filterslug = filter.gsub('/','-') if filter
-        archivename = ([org, repo, commit_id, filterslug].compact.join('-') + ".tar")
+        archivename = ([org, repo, commitslug, filterslug].compact.join('-') + ".tar")
         @archivefile = archivedir + archivename
         #return archivefile if File.exists?(archivefile)
 
