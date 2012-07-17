@@ -34,7 +34,7 @@ module Sideload
         commitslug = commit_id.gsub('/','-').gsub('#','-')
         filterslug = options[:filter].gsub('/','-') if options[:filter]
         pathslug = options[:path].gsub('/','-') if options[:path]
-        archivename = ([org, repo, commitslug, filterslug, pathslug].compact.join('-') + ".tar")
+        archivename = ([org, repo, commitslug, filterslug, pathslug, Time.now.to_i].compact.join('-') + ".tar")
         @archivefile = archivedir + archivename
         #return archivefile if File.exists?(archivefile)
 
