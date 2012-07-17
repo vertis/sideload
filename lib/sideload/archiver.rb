@@ -26,18 +26,19 @@ module Sideload
       end
     end
 
-    def archive(commit_id='HEAD', prefix=nil, filter=nil)
+    def archive(commit_id='HEAD', options={})
       begin
         cache_repository
 
         commit_id = resolve_head[0..9] if commit_id=='HEAD'
         commitslug = commit_id.gsub('/','-').gsub('#','-')
-        filterslug = filter.gsub('/','-') if filter
-        archivename = ([org, repo, commitslug, filterslug].compact.join('-') + ".tar")
+        filterslug = options[:filter].gsub('/','-') if options[:filter]
+        pathslug = options[:path].gsub('/','-') if options[:path]
+        archivename = ([org, repo, commitslug, filterslug, pathslug].compact.join('-') + ".tar")
         @archivefile = archivedir + archivename
         #return archivefile if File.exists?(archivefile)
 
-        create_archive(commit_id, prefix, filter)
+        create_archive(commit_id, options)
         return archivefile
       rescue => ex
         puts ex.message
@@ -78,11 +79,12 @@ module Sideload
       run("git clone --mirror #{base_url}/#{org}/#{repo}.git #{repodir}")
     end
 
-    def create_archive(commit_id='HEAD', prefix=nil, filter=nil)
+    def create_archive(commit_id='HEAD', options={})
       cmd = []
       cmd << "git archive --format=tar --remote='#{repodir}'"
-      cmd << "--prefix='#{prefix}/'" if prefix
-      cmd << "'#{[commit_id, filter].compact.join(":")}'"
+      cmd << "--prefix='#{options[:prefix]}/'" if options[:prefix]
+      cmd << "'#{[commit_id, options[:filter]].compact.join(":")}'"
+      cmd << options[:path] if options[:path]
       cmd << "> #{archivefile}"
       run(cmd.join(" "))
     end

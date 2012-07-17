@@ -8,7 +8,7 @@ module Sideload
 
     def perform
       archiver = Sideload::Archiver.new(Sideload.config.base_url, options["org"], options["repo"])
-      file = archiver.archive(options["commit"], options["prefix"], options["filter"])
+      file = archiver.archive(options["commit"], :prefix => options["prefix"], :filter => options["filter"], :path => options["path"])
       completed("file" => file.to_s)
     end
   end

@@ -6,12 +6,12 @@ require 'resque/status'
 module Sideload
   class App < Sinatra::Base
     get '/:org/:repo/tarball/:commit' do
-      jobid = Sideload::ArchiveJob.create(:org => params[:org], :repo => params[:repo], :commit => params[:commit], :filter => params[:filter], :prefix => params[:prefix])
+      jobid = Sideload::ArchiveJob.create(:org => params[:org], :repo => params[:repo], :commit => params[:commit], :filter => params[:filter], :path => params[:path], :prefix => params[:prefix])
       redirect "/download/#{jobid}", 302
     end
 
     get '/:org/:repo/tarball' do
-      jobid = Sideload::ArchiveJob.create(:org => params[:org], :repo => params[:repo], :commit => params[:commit], :filter => params[:filter], :prefix => params[:prefix])
+      jobid = Sideload::ArchiveJob.create(:org => params[:org], :repo => params[:repo], :commit => params[:commit], :filter => params[:filter], :path => params[:path], :prefix => params[:prefix])
       redirect "/download/#{jobid}", 302
     end
 

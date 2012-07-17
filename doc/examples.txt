@@ -1,0 +1,4 @@
+curl -X POST https://continuous-integration:changeme@git.realestate.com.au/api/v3/authorizations -d '{ "scopes" : [ "user", "public_repo", "repo", "delete_repo", "gist"],
+"note" : "Sideload token" }'
+
+curl -H "Authorization: bearer 380fee4095631340710e322f3bd6a239e39ef3bf" https://git.realestate.com.au/api/v3/user
