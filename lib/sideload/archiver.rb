@@ -1,5 +1,6 @@
 require 'open3'
 require 'pathname'
+require 'timeout'
 
 module Sideload
   class Archiver
@@ -75,10 +76,9 @@ module Sideload
     
     def lock(name, &block)
       lockfile = Pathname.new("/tmp/sideload_#{name}.lock")
-      while lockfile.exist?
-        count+=1
+      timeout(20) do
+        sleep 1 while lockfile.exist?
       end
-      return false if lockfile.exist?
       %x[touch #{lockfile}]
       yield
       %x[rm #{lockfile}]
