@@ -34,7 +34,7 @@ module Sideload
         commitslug = commit_id.gsub('/','-').gsub('#','-')
         filterslug = options[:filter].gsub('/','-') if options[:filter]
         pathslug = options[:path].gsub('/','-') if options[:path]
-        archivename = ([org, repo, commitslug, filterslug, pathslug, Time.now.to_i].compact.join('-') + ".tar")
+        archivename = ([org, repo, commitslug, filterslug, pathslug, Time.now.to_i, $$].compact.join('-') + ".tar")
         @archivefile = archivedir + archivename
         #return archivefile if File.exists?(archivefile)
 
@@ -61,14 +61,29 @@ module Sideload
     end
 
     def cache_repository
-      if File.exists?(repodir+'HEAD')
-        puts "Already exists, fetching from: #{org}/#{repo}" if ENV['DEBUG']
-        update_from_remote
-      else
-        repodir.rmtree rescue nil
-        puts "Mirroring from: #{org}/#{repo}" if ENV['DEBUG']
-        mirror
+      lock("#{org}-#{repo}") do
+        if File.exists?(repodir+'HEAD')
+          puts "Already exists, fetching from: #{org}/#{repo}" if ENV['DEBUG']
+          update_from_remote
+        else
+          repodir.rmtree rescue nil
+          puts "Mirroring from: #{org}/#{repo}" if ENV['DEBUG']
+          mirror
+        end
       end
+    end
+    
+    def lock(name, &block)
+      lockfile = Pathname.new("/tmp/sideload_#{name}.lock")
+      while lockfile.exist?
+        count+=1
+      end
+      return false if lockfile.exist?
+      %x[touch #{lockfile}]
+      yield
+      %x[rm #{lockfile}]
+    rescue
+      %x[rm #{lockfile}]
     end
 
     def update_from_remote

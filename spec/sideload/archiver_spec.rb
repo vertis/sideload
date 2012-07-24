@@ -27,7 +27,7 @@ describe Sideload::Archiver do
 
     it "should return the path of the archive" do
       archiver = Sideload::Archiver.new('git://github.com', 'vertis', 'flynn')
-      archiver.archive('081178062d').to_s.should =~ %r{/tmp/git-tars/vertis-flynn-081178062d.tar}
+      archiver.archive('081178062d').to_s.should =~ %r{/tmp/git-tars/vertis-flynn-081178062d}
     end
   end
 end
