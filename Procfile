@@ -1,2 +1,2 @@
-web: unicorn -c config/unicorn.rb -p $PORT
-worker: rake resque:workers
+web: bundle exec unicorn -c config/unicorn.rb -p $PORT
+worker: bundle exec rake resque:workers
